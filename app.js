@@ -1,13 +1,13 @@
 require('dotenv').config()
 const express = require('express')
 const ejs = require('ejs')
-const mongoose = require('mongoose')
 const session = require('express-session')
 const passport = require('passport')
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const User = require('./userModel.js')
+const connectDB = require('./db.js')
 const app = express()
 
 app.use(express.static('public'))
@@ -24,11 +24,7 @@ app.use(
 app.use(passport.initialize())
 app.use(passport.session())
 
-mongoose.connect('mongodb://localhost:27017/userDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-})
+connectDB()
 
 passport.use(User.createStrategy())
 
