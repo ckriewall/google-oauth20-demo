@@ -1,16 +1,19 @@
 const mongoose = require('mongoose')
 
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+}
+
 const connectDB = () => {
-  try {
-    mongoose.connect('mongodb://localhost:27017/userDB', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-    })
-    console.log('Connected to Mongo')
-  } catch (error) {
-    console.log(error.message)
-  }
+  mongoose.connect(process.env.MONGO_URI, options, (err) => {
+    if (!err) {
+      console.log('Mongo connected')
+    } else {
+      console.log(err)
+    }
+  })
 }
 
 module.exports = connectDB

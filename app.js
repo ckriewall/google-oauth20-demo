@@ -1,17 +1,22 @@
 require('dotenv').config()
 const express = require('express')
 const ejs = require('ejs')
+
 const session = require('express-session')
 const passport = require('passport')
-
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const User = require('./userModel.js')
 const connectDB = require('./db.js')
+connectDB()
+
+// EXPRESS CONFIGURATION
 const app = express()
 
 app.use(express.static('public'))
 app.set('view engine', 'ejs')
+
+// PASSPORT CONFIGURATION
 
 app.use(
   session({
@@ -23,8 +28,6 @@ app.use(
 
 app.use(passport.initialize())
 app.use(passport.session())
-
-connectDB()
 
 passport.use(User.createStrategy())
 
@@ -56,6 +59,8 @@ passport.use(
   )
 )
 
+// ROUTES
+
 app.get('/', function (req, res) {
   res.render('home')
 })
@@ -67,25 +72,17 @@ app.get(
   passport.authenticate('google', { failureRedirect: '/login' }),
   function (req, res) {
     // Successful authentication, redirect to private.
-    res.redirect('/private-info')
+    res.redirect('/private-route')
   }
 )
 
-app.get('/public-info', function (req, res) {
-  User.find({ secret: { $ne: null } }, function (err, foundUsers) {
-    if (err) {
-      console.log(err)
-    } else {
-      if (foundUsers) {
-        res.render('public-info', { usersWithSecrets: foundUsers })
-      }
-    }
-  })
+app.get('/public-route', function (req, res) {
+  res.render('public-route')
 })
 
-app.get('/private-info', function (req, res) {
+app.get('/private-route', function (req, res) {
   if (req.isAuthenticated()) {
-    res.render('private-info', {
+    res.render('private-route', {
       fname: 'Charlie',
       email: 'charlie@kriewall.com',
     })
