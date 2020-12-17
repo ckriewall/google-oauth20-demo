@@ -59,14 +59,31 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, cb) {
       // Save Google profile data to Mongo
-      User.findOrCreate(
+      User.findOne(
         {
-          email: profile.email,
           googleId: profile.id,
-          googleProfile: profile._json,
         },
         function (err, user) {
-          return cb(err, user)
+          if (err) {
+            return cb(err)
+          }
+          if (!user) {
+            // User wasn't found in Mongo.
+            // Create and save a new User document.
+            console.log('Create user')
+            user = new User({
+              email: profile.email,
+              googleId: profile.id,
+              googleProfile: profile._json,
+            })
+            user.save(function (err) {
+              if (err) console.log(err)
+              return cb(err, user)
+            })
+          } else {
+            // User was found in Mongo. Return the user.
+            return cb(err, user)
+          }
         }
       )
     }
