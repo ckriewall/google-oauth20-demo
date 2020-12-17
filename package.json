@@ -2,6 +2,7 @@
   "name": "google-oauth20-demo",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "app.js",
   "dependencies": {
     "dotenv": "^8.2.0",

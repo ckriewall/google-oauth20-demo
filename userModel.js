@@ -1,5 +1,4 @@
-const mongoose = require('mongoose')
-const findOrCreate = require('mongoose-findorcreate')
+import mongoose from 'mongoose'
 const userSchema = new mongoose.Schema(
   {
     email: String,
@@ -9,8 +8,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-userSchema.plugin(findOrCreate)
-
 const User = new mongoose.model('User', userSchema)
 
-module.exports = User
+export default User

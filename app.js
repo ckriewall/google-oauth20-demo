@@ -1,11 +1,13 @@
-require('dotenv').config()
-const express = require('express')
-const ejs = require('ejs')
-const session = require('express-session')
-const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth20').Strategy
-const User = require('./userModel.js')
-const connectDB = require('./db.js')
+import dotenv from 'dotenv'
+import express from 'express'
+import ejs from 'ejs'
+import session from 'express-session'
+import passport from 'passport'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
+import User from './userModel.js'
+import connectDB from './db.js'
+
+dotenv.config()
 
 // Connect to MongoDB
 connectDB()

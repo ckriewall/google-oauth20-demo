@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const options = {
   useNewUrlParser: true,
@@ -16,4 +16,4 @@ const connectDB = () => {
   })
 }
 
-module.exports = connectDB
+export default connectDB
