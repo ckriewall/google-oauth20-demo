@@ -40,14 +40,14 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 // Serialize user data in a cookie to support login sessions.
-passport.serializeUser(function (user, done) {
-  done(null, user.id)
+passport.serializeUser((user, cb) => {
+  cb(null, user.id)
 })
 
 // Deserialize user data by searching for the googleID in Mongo.
-passport.deserializeUser(function (id, done) {
-  User.findById(id, function (err, user) {
-    done(err, user)
+passport.deserializeUser((id, cb) => {
+  User.findById(id, (err, user) => {
+    cb(err, user)
   })
 })
 
@@ -59,26 +59,25 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
-    function (accessToken, refreshToken, profile, cb) {
-      // Save Google profile data to Mongo
+    (accessToken, refreshToken, profile, cb) => {
+      // Search for the current user in Mongo
       User.findOne(
         {
           googleId: profile.id,
         },
-        function (err, user) {
+        (err, user) => {
           if (err) {
             return cb(err)
           }
           if (!user) {
             // User wasn't found in Mongo.
             // Create and save a new User document.
-            console.log('Create user')
             user = new User({
               email: profile.email,
               googleId: profile.id,
               googleProfile: profile._json,
             })
-            user.save(function (err) {
+            user.save((err) => {
               if (err) console.log(err)
               return cb(err, user)
             })
@@ -92,7 +91,7 @@ passport.use(
   )
 )
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.render('home')
 })
 
@@ -108,17 +107,17 @@ app.get('/auth/google', passport.authenticate('google', googleScope))
 app.get(
   '/auth/google/redirect',
   passport.authenticate('google', { failureRedirect: '/login' }),
-  function (req, res) {
+  (req, res) => {
     // Successful authentication, redirect to private.
     res.redirect('/private-route')
   }
 )
 
-app.get('/public-route', function (req, res) {
+app.get('/public-route', (req, res) => {
   res.render('public-route')
 })
 
-app.get('/private-route', function (req, res) {
+app.get('/private-route', (req, res) => {
   if (req.isAuthenticated()) {
     res.render('private-route', {
       fname: req.user.googleProfile.name,
@@ -129,11 +128,11 @@ app.get('/private-route', function (req, res) {
   }
 })
 
-app.get('/logout', function (req, res) {
+app.get('/logout', (req, res) => {
   req.logout()
   res.redirect('/')
 })
 
-app.listen(port, function () {
+app.listen(port, () => {
   console.log('Express listening on port ' + port + '...')
 })
